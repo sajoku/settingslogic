@@ -34,6 +34,9 @@ class Settingslogic < Hash
     end
 
     def permitted_classes(value = [])
+      if defined?(Rails) && Rails.application.config&.active_record&.yaml_column_permitted_classes
+        value += Rails.application.config&.active_record&.yaml_column_permitted_classes
+      end
       @permitted_classes ||= value
     end
 
