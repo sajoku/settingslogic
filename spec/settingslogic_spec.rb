@@ -196,6 +196,10 @@ describe "Settingslogic" do
     Settings.send(:instance).should be_is_a(Hash)
   end
 
+  it "works with aliases" do
+    expect(SettingsWithAliases.b).to eql(3)
+  end
+
   describe "#to_hash" do
     it "should return a new instance of a Hash object" do
       Settings.to_hash.should be_kind_of(Hash)
