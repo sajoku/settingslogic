@@ -4,11 +4,11 @@ describe "Settingslogic" do
   it "should access settings" do
     Settings.setting2.should == 5
   end
-  
+
   it "should access nested settings" do
     Settings.setting1.setting1_child.should == "saweet"
   end
-  
+
   it "should access settings in nested arrays" do
     Settings.array.first.name.should == "first"
   end
@@ -32,20 +32,20 @@ describe "Settingslogic" do
 
   it "should return the namespace" do
     Settings.namespace.should be_nil
-    Settings2.namespace.should == 'setting1'
+    Settings2.namespace.should == "setting1"
   end
 
   it "should distinguish nested keys" do
-    Settings.language.haskell.paradigm.should == 'functional'
-    Settings.language.smalltalk.paradigm.should == 'object oriented'
+    Settings.language.haskell.paradigm.should == "functional"
+    Settings.language.smalltalk.paradigm.should == "object oriented"
   end
-  
+
   it "should not collide with global methods" do
-    Settings3.nested.collides.does.should == 'not either'
-    Settings3[:nested] = 'fooey'
-    Settings3[:nested].should == 'fooey'
-    Settings3.nested.should == 'fooey'
-    Settings3.collides.does.should == 'not'
+    Settings3.nested.collides.does.should == "not either"
+    Settings3[:nested] = "fooey"
+    Settings3[:nested].should == "fooey"
+    Settings3.nested.should == "fooey"
+    Settings3.collides.does.should == "not"
   end
 
   it "should raise a helpful error message" do
@@ -77,27 +77,27 @@ describe "Settingslogic" do
     end
     e.should_not be_nil
     e.message.should =~ /Missing setting 'erlang' in 'language' section/
-    
-    Settings.language['erlang'].should be_nil
-    Settings.language['erlang'] = 5
-    Settings.language['erlang'].should == 5
 
-    Settings.language['erlang'] = {'paradigm' => 'functional'}
-    Settings.language.erlang.paradigm.should == 'functional'
-    Settings.respond_to?('erlang').should be_false
+    Settings.language["erlang"].should be_nil
+    Settings.language["erlang"] = 5
+    Settings.language["erlang"].should == 5
+
+    Settings.language["erlang"] = {"paradigm" => "functional"}
+    Settings.language.erlang.paradigm.should == "functional"
+    expect(Settings.respond_to?(:erlang)).to eql(false)
 
     Settings.reload!
-    Settings.language['erlang'].should be_nil
+    Settings.language["erlang"].should be_nil
 
     Settings.language[:erlang] ||= 5
     Settings.language[:erlang].should == 5
 
     Settings.language[:erlang] = {}
-    Settings.language[:erlang][:paradigm] = 'functional'
-    Settings.language.erlang.paradigm.should == 'functional'
+    Settings.language[:erlang][:paradigm] = "functional"
+    Settings.language.erlang.paradigm.should == "functional"
 
-    Settings[:toplevel] = '42'
-    Settings.toplevel.should == '42'
+    Settings[:toplevel] = "42"
+    Settings.toplevel.should == "42"
   end
 
   it "should raise an error on a nil source argument" do
@@ -126,14 +126,14 @@ describe "Settingslogic" do
   # end
 
   it "should handle oddly-named settings" do
-    Settings.language['some-dash-setting#'] = 'dashtastic'
-    Settings.language['some-dash-setting#'].should == 'dashtastic'
+    Settings.language["some-dash-setting#"] = "dashtastic"
+    Settings.language["some-dash-setting#"].should == "dashtastic"
   end
 
   it "should handle settings with nil value" do
     Settings["flag"] = true
     Settings["flag"] = nil
-    Settings.flag.should == nil
+    Settings.flag.should.nil?
   end
 
   it "should handle settings with false value" do
@@ -148,9 +148,9 @@ describe "Settingslogic" do
   end
 
   it "should be able to get() a key with dot.notation" do
-    Settings.get('setting1.setting1_child').should == "saweet"
-    Settings.get('setting1.deep.another').should == "my value"
-    Settings.get('setting1.deep.child.value').should == 2
+    Settings.get("setting1.setting1_child").should == "saweet"
+    Settings.get("setting1.deep.another").should == "my value"
+    Settings.get("setting1.deep.child.value").should == 2
   end
 
   # If .name is not a property, delegate to superclass
@@ -161,28 +161,28 @@ describe "Settingslogic" do
   # If .name is called on Settingslogic itself, handle appropriately
   # by delegating to Hash
   it "should have the parent class always respond with Module.name" do
-    Settingslogic.name.should == 'Settingslogic'
+    Settingslogic.name.should == "Settingslogic"
   end
 
   # If .name is a property, respond with that instead of delegating to superclass
   it "should allow a name setting to be overriden" do
-    Settings.name.should == 'test'
+    Settings.name.should == "test"
   end
-  
+
   it "should allow symbolize_keys" do
     Settings.reload!
-    result = Settings.language.haskell.symbolize_keys 
+    result = Settings.language.haskell.symbolize_keys
     result.class.should == Hash
-    result.should == {:paradigm => "functional"} 
+    result.should == {paradigm: "functional"}
   end
-  
+
   it "should allow symbolize_keys on nested hashes" do
     Settings.reload!
     result = Settings.language.symbolize_keys
     result.class.should == Hash
     result.should == {
-      :haskell => {:paradigm => "functional"},
-      :smalltalk => {:paradigm => "object oriented"}
+      haskell: {paradigm: "functional"},
+      smalltalk: {paradigm: "object oriented"}
     }
   end
 
@@ -203,5 +203,4 @@ describe "Settingslogic" do
       Settings.to_hash.object_id.should_not == Settings.object_id
     end
   end
-
 end
